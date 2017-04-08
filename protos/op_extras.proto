@@ -1,0 +1,15 @@
+syntax = "proto3";
+package karps.op;
+
+//import "google/protobuf/any.proto";
+
+//import "types.proto";
+
+// ----- Some specific schemas for operations in the standard library.
+//
+// These are extra information required by some of these ops, but they are
+// not structural or fundamental ops.
+// These are expected to be implemented in Spark, but may be missing in other
+// backends.
+
+// TODO: put here the I/O.

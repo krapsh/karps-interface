@@ -1,0 +1,52 @@
+syntax = "proto3";
+package karps;
+
+// The type of the arrays.
+message ArrayType {
+  DataType inner_type = 1;
+}
+
+message StructField {
+  string name = 1;
+  DataType type = 2;
+}
+
+message StructType {
+  repeated StructField fields = 1;
+}
+
+message DataType {
+  bool nullable = 1;
+  oneof types {
+    // The current valid values for the primitives are:
+    //  - string, double, int, bool
+    string primitive = 2;
+    ArrayType array = 3;
+    StructType struct = 4;
+  }
+}
+
+
+
+// -------- CELL DATA ----------
+
+// A cell.
+// A cell is a unit of content, checked by a data type.
+// If all the values below are empty, it is assumed to be the empty cell.
+// The messages are brief to facilitate the reading.
+message Cell {
+  oneof values {
+    int32 i = 1;
+    double d = 2;
+    bool b = 3;
+  }
+  // It is actually part of the one-of, but due to a limitation of ProtoBuf,
+  // it needs to be set outside to allow for repeated fields.
+  repeated Cell s = 10;
+  repeated Cell a = 11;
+}
+
+// A row.
+message Row {
+  repeated Cell cells = 1;
+}

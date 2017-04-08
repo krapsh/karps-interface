@@ -1,0 +1,67 @@
+syntax = "proto3";
+package karps;
+
+import "google/protobuf/any.proto";
+
+import "types.proto";
+
+
+message Computation {
+  string sessionId = 1;
+  string id = 2;
+  repeated Node nodes = 3;
+  repeated string terminalNodes = 4;
+  string collectingNode = 5;
+  repeated string terminalNodeIds = 6;
+}
+
+enum NodeLocality {
+  LOCAL = 0;
+  DISTRIBUTED = 1;
+}
+
+message NodePath {
+  repeated string path = 1;
+}
+
+message Node {
+  NodeLocality locality = 1;
+  NodePath path = 2;
+  string op_name = 3;
+  google.protobuf.Any op_extra = 4;
+  repeated NodePath parents = 5;
+  repeated NodePath logical_dependencies = 6;
+  // This type is not required, but it is useful to confirm that the type
+  // computed by the fronted corresponds to what the backend is going to 
+  // produce.
+  DataType validation_type = 100;
+}
+
+
+// ------ Status messages ---------
+
+message NodeComputationSuccess {
+  DataType data_type = 1;
+  Cell value = 2;
+}
+
+message NodeComputationFailure {
+  string message = 1;
+}
+
+message NodeQueued {
+  
+}
+
+message NodeRunning {
+  
+}
+
+message NodeStatus {
+  oneof status {
+    NodeComputationSuccess success = 1;
+    NodeComputationFailure failure = 2;
+    NodeQueued queued = 3;
+    NodeRunning running = 4;
+  }
+}

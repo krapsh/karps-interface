@@ -1,0 +1,161 @@
+syntax = "proto3";
+package karps.op;
+
+import "google/protobuf/any.proto";
+
+import "types.proto";
+import "karps.proto";
+
+// The schema expected by the standard library.
+// All the operations below are expected to be implemented in all the backends.
+
+// ------- Structured transform ----------
+// This transform takes a single dataframe or observable and constructs a new
+// one, which may have inner fields.
+
+// A path to a field in column structures.
+// The empty path refers to the column itself.
+message FieldPath {
+  repeated string field = 1;
+}
+
+// Operations that transform one or more columns of data into a column of data.
+message ColumnOperation {
+  // A field in a struct when performing a transform.
+  message StructField {
+    string name = 1;
+    ColumnOperation op = 2;
+  }
+
+  // Extracts an (arbitrarily nested) column from the input dataframe.
+  message Extraction {
+    // The path to the field.
+    FieldPath field_path = 1;
+  }
+
+  // A broadcastable function that operates on one or more columns, and that is
+  // part of the standard library.
+  // For now, all the functions defined by Spark are considered part of the
+  // standard library.
+  // This does not include user-registered UDFs.
+  // It is assumed that this function is stateless, does not perform any side
+  // effect, and that its return type is well-defined given the type of its
+  // inputs.
+  message Function {
+    // The lower-case name of the function as accepted in the Spark registry.
+    string name = 1;
+    repeated ColumnOperation arguments = 2;
+  }
+
+  // A constant value for a column.
+  // The type and the value must be compatible.
+  // Note: unlike Spark, arbitrary cells are allowed.
+  message Literal {
+    Cell value = 1;
+    DataType type = 2;
+  }
+
+  // All the operations allowed on columns, at least of on which must be
+  // defined.
+  oneof ops {
+    Extraction extraction = 1;
+    Function function = 2;
+    // A constant value.
+    // Note: unlike Spark
+    Literal literal = 3;
+  }
+  // Technically part of the oneof above.
+  // Note: unlike Spark, empty structs are prohibited and result in error.
+  repeated StructField struct = 10;
+}
+
+// ------- Aggregation ----------
+
+
+
+// TODO
+message UDAFAggregation {
+  
+}
+
+message StructuredAggregationFunction {
+  string function_name = 1;
+  repeated FieldPath inputs = 2;
+}
+
+message AggregationOperation {
+  message StructField {
+    string name = 1;
+    AggregationOperation op = 2;
+  }
+
+  oneof agg_ops {
+    UDAFAggregation udaf = 1;
+    StructuredAggregationFunction structured_function = 2;
+  }
+  // Technically part of the oneof above.
+  repeated StructField struct = 10;
+}
+
+// The broadcast join operation.
+message BroadcastJoin {
+  
+}
+
+// An opaque aggregator. There is no structural information we know about this
+// one.
+message OpaqueAggregator {
+  StandardOperator op = 1;
+}
+
+// A local literal.
+message LocalLiteral {
+  DataType type = 1;
+  Cell value = 2;
+}
+
+// A distributed literal.
+message DistributedLiteral {
+  DataType cellType = 1;
+  repeated Cell values = 2;
+}
+
+message NodePointer {
+  NodePath path = 1;
+}
+
+// This is not used by the protocol, but it is useful to understand all
+// the operations supported by the backend.
+// This is the list of all the operations that can be performed.
+message NodeOperation {
+  oneof ops {
+    // An opaque, non-broadcastable, local -> local transform.
+    StandardOperator local_op = 1;
+    LocalLiteral local_literal = 2;
+    DistributedLiteral distributed_literal = 3;
+    // An opaque function, dis->local
+    OpaqueAggregator opaque_aggregator = 4;
+    // The broadcast join operator.
+    BroadcastJoin broadcast = 5;
+    // Structured dis->local aggregation.
+    AggregationOperation structured_aggregation = 6;
+    // A structured transform that may be local->local or dis->dis, depending
+    // on the input.
+    ColumnOperation structured_transform = 7;
+    NodePointer pointer = 8;
+    // An opaque, non-reducible, dis->dis transform.
+    StandardOperator distributed_op = 9;
+  }
+}
+
+// A standard description for operators in Karps.
+// This operation is opaque and may be backend-dependent.
+// This operation
+message StandardOperator {
+  string name = 1;
+  google.protobuf.Any extra = 2;
+  // (optional) the output data type. This is convenient for debugging.
+  DataType output_type = 3;
+}
+
+
