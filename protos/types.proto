@@ -1,0 +1,112 @@
+/**
+ * Types and basic data structures.
+ *
+ * This file defines the types of data, as understood in Karps. These data types
+ * correspond to the data types found in SQL, Spark, etc., with some small
+ * differences:
+ *
+ *  - the unit of work is the cell, not the row.
+ *
+ *  - a type is always associated with nullability information.
+ *
+ * From a theoretical perspective, the types allowed by Karps are a subset of
+ * the algebraic datatypes: all the product types are allowed, and the only
+ * allowed sum type is Option/Maybe (nullability).
+ *
+ * These changes allow a unified and well-defined treatment of datasets, 
+ * columns and observables without having to make exceptions for various corner
+ * cases.
+ *
+ * Meta-information is not allowed in types. It may be added eventually.
+ */
+syntax = "proto3";
+package karps;
+
+/**
+ * An array of a given type.
+ */
+message ArrayType {
+  DataType inner_type = 1;
+}
+
+/**
+ * A structure. Unlike SQL, both the name and the order of the fields matter.
+ */
+message StructType {
+  /**
+   * A field in a structure.
+   */
+  message StructField {
+    /**
+     * Must be non-empty. Anything is allowed.
+     */
+    string name = 1;
+    DataType type = 2;
+  }
+
+  /**
+   * Note: unlike Spark, fields must be non-empty (no empty struct).
+   */
+  repeated StructField fields = 1;
+}
+
+/**
+ * The type of data stored in Karps.
+ */
+message DataType {
+  /**
+   * The primitive data types.
+   */
+  enum Primitive {
+    STRING = 0;
+    DOUBLE = 1;
+    INT = 2; // 32-bit encoding of signed integers.
+    BOOL = 3;
+  }
+
+  /**
+   * Nullability information. If set to nullable, the underlying value may
+   * be missing.
+   */
+  bool nullable = 1;
+  oneof types {
+    Primitive primitive = 2;
+    ArrayType array = 3;
+    StructType struct = 4;
+  }
+}
+
+
+
+// -------- CELL DATA ----------
+
+/**
+ * A cell.
+ *
+ * A cell is a unit of content, checked by a data type.
+ *
+ * If all the values below are empty, it is the empty cell.
+ *
+ * The messages are brief to facilitate the reading.
+ */
+message Cell {
+  oneof values {
+    string t = 1;
+    int32 i = 2;
+    double d = 3;
+    bool b = 4;
+  }
+  // It is actually part of the one-of, but due to a limitation of ProtoBuf,
+  // it needs to be set outside to allow for repeated fields.
+  repeated Cell s = 10;
+  repeated Cell a = 11;
+}
+
+/**
+ * A unit of content in Spark.
+ *
+ * This is not used in Karps.
+ */
+message Row {
+  repeated Cell cells = 1;
+}

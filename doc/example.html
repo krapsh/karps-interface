@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Protocol Documentation</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>
+    <style>
+      body {
+        width: 60em;
+        margin: 1em auto;
+        color: #222;
+        font-family: "Ubuntu", sans-serif;
+        padding-bottom: 4em;
+      }
+
+      h1 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      h2 {
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+        margin: 1.5em 0;
+      }
+
+      h3 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      a {
+        text-decoration: none;
+        color: #567e25;
+      }
+
+      table {
+        width: 100%;
+        font-size: 80%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        font-weight: 700;
+        background-color: #dcdcdc;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #fbfbfb;
+      }
+
+      td {
+        border: 1px solid #ccc;
+        padding: 0.5ex 2ex;
+      }
+
+      td p {
+        text-indent: 1em;
+        margin: 0;
+      }
+
+      td p:nth-child(1) {
+        text-indent: 0; /* No indent on first p in td */
+      }
+
+      /* Table of fields */
+      .field-table td:nth-child(1) { /* Field */
+        width: 10em;
+      }
+      .field-table td:nth-child(2) { /* Type */
+        width: 10em;
+      }
+      .field-table td:nth-child(3) { /* Label */
+        width: 6em;
+      }
+      .field-table td:nth-child(4) { /* Description */
+        width: auto;
+      }
+
+      /* Table of extensions */
+      .extension-table td:nth-child(1) { /* Extension */
+        width: 10em;
+      }
+      .extension-table td:nth-child(2) { /* Type */
+        width: 10em;
+      }
+      .extension-table td:nth-child(3) { /* Base */
+        width: 10em;
+      }
+      .extension-table td:nth-child(4) { /* Number */
+        width: 5em;
+      }
+      .extension-table td:nth-child(5) { /* Description */
+        width: auto;
+      }
+
+      /* Table of enum values. */
+      .enum-table td:nth-child(1) { /* Name */
+        width: 10em;
+      }
+      .enum-table td:nth-child(2) { /* Number */
+        width: 10em;
+      }
+      .enum-table td:nth-child(3) { /* Description */
+        width: auto;
+      }
+
+      /* Table of scalar value types. */
+      .scalar-value-types-table tr {
+        height: 3em;
+      }
+
+      /* Table of contents. */
+      #toc-container ul {
+        list-style-type: none;
+        padding-left: 1em;
+        line-height: 180%;
+        margin: 0;
+      }
+      #toc > li > a {
+        font-weight: bold;
+      }
+
+      /* File heading div */
+      .file-heading {
+        width: 100%;
+        display: table;
+        border-bottom: 1px solid #aaa;
+        margin: 4em 0 1.5em 0;
+      }
+      .file-heading h2 {
+        border: none;
+        display: table-cell;
+      }
+      .file-heading a {
+        text-align: right;
+        display: table-cell;
+      }
+
+      /* The 'M', 'E' and 'X' badges in the ToC */
+      .badge {
+        width: 1.6em;
+        height: 1.6em;
+        display: inline-block;
+
+        line-height: 1.6em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 60%;
+
+        color: #89ba48;
+        background-color: #dff0c8;
+
+        margin: 0.5ex 1em 0.5ex -1em;
+        border: 1px solid #fbfbfb;
+        border-radius: 1ex;
+      }
+    </style>
+
+    <!-- User custom CSS -->
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  </head>
+
+  <body>
+
+    <h1 id="title">Protocol Documentation</h1>
+
+    <h2>Table of Contents</h2>
+
+    <div id="toc-container">
+      <ul id="toc">
+        <li>
+          <a href="#karps.proto">karps.proto</a>
+          <ul>
+            <li>
+              <a href="#karps.Computation">
+                <span class="badge">M</span>
+                Computation
+              </a>
+            </li>
+            <li>
+              <a href="#karps.Node">
+                <span class="badge">M</span>
+                Node
+              </a>
+            </li>
+            <li>
+              <a href="#karps.NodeComputationFailure">
+                <span class="badge">M</span>
+                NodeComputationFailure
+              </a>
+            </li>
+            <li>
+              <a href="#karps.NodeComputationSuccess">
+                <span class="badge">M</span>
+                NodeComputationSuccess
+              </a>
+            </li>
+            <li>
+              <a href="#karps.NodePath">
+                <span class="badge">M</span>
+                NodePath
+              </a>
+            </li>
+            <li>
+              <a href="#karps.NodeQueued">
+                <span class="badge">M</span>
+                NodeQueued
+              </a>
+            </li>
+            <li>
+              <a href="#karps.NodeRunning">
+                <span class="badge">M</span>
+                NodeRunning
+              </a>
+            </li>
+            <li>
+              <a href="#karps.NodeStatus">
+                <span class="badge">M</span>
+                NodeStatus
+              </a>
+            </li>
+            <li>
+              <a href="#karps.NodeLocality">
+                <span class="badge">E</span>
+                NodeLocality
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#op.proto">op.proto</a>
+          <ul>
+            <li>
+              <a href="#karps.op.AggregationOperation">
+                <span class="badge">M</span>
+                AggregationOperation
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.AggregationOperation.StructField">
+                <span class="badge">M</span>
+                AggregationOperation.StructField
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.BroadcastJoin">
+                <span class="badge">M</span>
+                BroadcastJoin
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.ColumnOperation">
+                <span class="badge">M</span>
+                ColumnOperation
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.ColumnOperation.Extraction">
+                <span class="badge">M</span>
+                ColumnOperation.Extraction
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.ColumnOperation.Function">
+                <span class="badge">M</span>
+                ColumnOperation.Function
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.ColumnOperation.Literal">
+                <span class="badge">M</span>
+                ColumnOperation.Literal
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.ColumnOperation.StructField">
+                <span class="badge">M</span>
+                ColumnOperation.StructField
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.DistributedLiteral">
+                <span class="badge">M</span>
+                DistributedLiteral
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.FieldPath">
+                <span class="badge">M</span>
+                FieldPath
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.LocalLiteral">
+                <span class="badge">M</span>
+                LocalLiteral
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.NodeOperation">
+                <span class="badge">M</span>
+                NodeOperation
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.NodePointer">
+                <span class="badge">M</span>
+                NodePointer
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.OpaqueAggregator">
+                <span class="badge">M</span>
+                OpaqueAggregator
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.StandardOperator">
+                <span class="badge">M</span>
+                StandardOperator
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.StructuredAggregationFunction">
+                <span class="badge">M</span>
+                StructuredAggregationFunction
+              </a>
+            </li>
+            <li>
+              <a href="#karps.op.UDAFAggregation">
+                <span class="badge">M</span>
+                UDAFAggregation
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#op_extras.proto">op_extras.proto</a>
+          <ul>
+          </ul>
+        </li>
+        <li>
+          <a href="#service.proto">service.proto</a>
+          <ul>
+            <li>
+              <a href="#karps.ComputationStatusRequest">
+                <span class="badge">M</span>
+                ComputationStatusRequest
+              </a>
+            </li>
+            <li>
+              <a href="#karps.ComputationStatusResponse">
+                <span class="badge">M</span>
+                ComputationStatusResponse
+              </a>
+            </li>
+            <li>
+              <a href="#karps.ComputationStatusResponse.Status">
+                <span class="badge">M</span>
+                ComputationStatusResponse.Status
+              </a>
+            </li>
+            <li>
+              <a href="#karps.CreateComputationRequest">
+                <span class="badge">M</span>
+                CreateComputationRequest
+              </a>
+            </li>
+            <li>
+              <a href="#karps.CreateComputationResponse">
+                <span class="badge">M</span>
+                CreateComputationResponse
+              </a>
+            </li>
+            <li>
+              <a href="#karps.CreateSessionData">
+                <span class="badge">M</span>
+                CreateSessionData
+              </a>
+            </li>
+            <li>
+              <a href="#karps.CreateSessionResult">
+                <span class="badge">M</span>
+                CreateSessionResult
+              </a>
+            </li>
+            <li>
+              <a href="#karps.ResourceStatusRequest">
+                <span class="badge">M</span>
+                ResourceStatusRequest
+              </a>
+            </li>
+            <li>
+              <a href="#karps.ResourceStatusRequest.Resource">
+                <span class="badge">M</span>
+                ResourceStatusRequest.Resource
+              </a>
+            </li>
+            <li>
+              <a href="#karps.ResourceStatusResponse">
+                <span class="badge">M</span>
+                ResourceStatusResponse
+              </a>
+            </li>
+            <li>
+              <a href="#karps.ResourceStatusResponse.ResourceError">
+                <span class="badge">M</span>
+                ResourceStatusResponse.ResourceError
+              </a>
+            </li>
+            <li>
+              <a href="#karps.ResourceStatusResponse.ResourceInfo">
+                <span class="badge">M</span>
+                ResourceStatusResponse.ResourceInfo
+              </a>
+            </li>
+            <li>
+              <a href="#karps.KarpsService">
+                <span class="badge">S</span>
+                KarpsService
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#types.proto">types.proto</a>
+          <ul>
+            <li>
+              <a href="#karps.ArrayType">
+                <span class="badge">M</span>
+                ArrayType
+              </a>
+            </li>
+            <li>
+              <a href="#karps.Cell">
+                <span class="badge">M</span>
+                Cell
+              </a>
+            </li>
+            <li>
+              <a href="#karps.DataType">
+                <span class="badge">M</span>
+                DataType
+              </a>
+            </li>
+            <li>
+              <a href="#karps.Row">
+                <span class="badge">M</span>
+                Row
+              </a>
+            </li>
+            <li>
+              <a href="#karps.StructType">
+                <span class="badge">M</span>
+                StructType
+              </a>
+            </li>
+            <li>
+              <a href="#karps.StructType.StructField">
+                <span class="badge">M</span>
+                StructType.StructField
+              </a>
+            </li>
+            <li>
+              <a href="#karps.DataType.Primitive">
+                <span class="badge">E</span>
+                DataType.Primitive
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#scalar-value-types">Scalar Value Types</a></li>
+      </ul>
+    </div>
+
+    <div class="file-heading">
+      <h2 id="karps.proto">karps.proto</h2><a href="#title">Top</a>
+    </div>
+    <p>General message structures.</p>
+    <h3 id="karps.Computation">Computation</h3>
+    <p>A computation sent to the backend.</p><p>A computation is a unit of work for the backend. It corresponds to a single
+graph (DAG) of operations to perform.</p><p>All computations operate within a session, which is the unit of state in
+the backend.</p><p>A computation defines a list of terminal nodes. It is declared to be
+completed when all the terminal nodes have been evaluated.</p><p>If operations need to refer to results of previous operations, a special
+pointer structure is provided.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>id</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p>An identifier for this computation.</p><p>Each identifier must be unique. An error will be triggered if the
+ID of this computation has been already seen within the scope of the
+session.</p></td>
+        </tr>
+        <tr>
+          <td>nodes</td>
+          <td><a href="#karps.Node">Node</a></td>
+          <td>repeated</td>
+          <td><p>The compute nodes. They must form a DAG.</p></td>
+        </tr>
+        <tr>
+          <td>terminalNodes</td>
+          <td><a href="#karps.NodePath">NodePath</a></td>
+          <td>repeated</td>
+          <td><p>The paths of the nodes that will be used to determine if the session has
+finished.</p><p>Note: these nodes must be observables (not datasets). An error is triggered
+otherwise.</p><p>Note: if the list is empty, no computation is performed.</p></td>
+        </tr>
+        <tr>
+          <td>collectingNode</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p>TODO: remove</p></td>
+        </tr>
+        <tr>
+          <td>terminalNodeIds</td>
+          <td><a href="#string">string</a></td>
+          <td>repeated</td>
+          <td><p>TODO: remove</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.Node">Node</h3>
+    <p>A computation node. Each node corresponds to an operator in a graph of
+computations.</p><p>A node has a single output (unlike TensorFlow for example), which is either
+'local' or 'distributed' (see the discussion in NodeLocality).</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>locality</td>
+          <td><a href="#karps.NodeLocality">NodeLocality</a></td>
+          <td>optional</td>
+          <td><p>The locality of the output.</p></td>
+        </tr>
+        <tr>
+          <td>path</td>
+          <td><a href="#karps.NodePath">NodePath</a></td>
+          <td>optional</td>
+          <td><p>The path of this node in the computation.</p></td>
+        </tr>
+        <tr>
+          <td>op_name</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p>The name of the operator.</p><p>It is customary to use the java class convention when defining an operator.
+For example, all the standard Karps operators in defined in the
+`org.spark` and `org.karps` namespace: `org.spark.LocalLiteral`, etc.</p></td>
+        </tr>
+        <tr>
+          <td>op_extra</td>
+          <td><a href="#google.protobuf.Any">Any</a></td>
+          <td>optional</td>
+          <td><p>Some extra information that is necessary for the operator to work. This
+field is optional.</p><p>For example, the extra values required by the operators in the standard
+library are defined in `op.proto`.</p></td>
+        </tr>
+        <tr>
+          <td>parents</td>
+          <td><a href="#karps.NodePath">NodePath</a></td>
+          <td>repeated</td>
+          <td><p>(optional) The dependencies of this operator. These nodes must be part of
+the
+computation, and cannot form a cycle. An error is raised otherwise.</p><p>This list may be empty or absent.</p></td>
+        </tr>
+        <tr>
+          <td>logical_dependencies</td>
+          <td><a href="#karps.NodePath">NodePath</a></td>
+          <td>repeated</td>
+          <td><p>Extra dependencies that are not required by the operator to work, but that
+will be checked for completion before working on this operator.</p><p>This is useful when strictly ordering operators that work as side effects,
+or to schedule computations at different times.</p><p>If provided, Karps will always honor this ordering and not attempt to
+optimize it away.</p></td>
+        </tr>
+        <tr>
+          <td>validation_type</td>
+          <td><a href="#karps.DataType">DataType</a></td>
+          <td>optional</td>
+          <td><p>(optional) The data type of the value (for observable) or of the value (for
+datasets).</p><p>This type is not required, but it is useful to confirm that the type
+computed by the fronted corresponds to what the backend is going to 
+produce.</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.NodeComputationFailure">NodeComputationFailure</h3>
+    <p>The computation of this node has finished with a failure.</p><p>All children of this node will also be marked as failure (not logical ones).</p><p>Note that the backend should not cache failures.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>message</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.NodeComputationSuccess">NodeComputationSuccess</h3>
+    <p>The computation of this node has finished with a success.</p><p>If requested, the content of this node is also returned.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>data_type</td>
+          <td><a href="#karps.DataType">DataType</a></td>
+          <td>optional</td>
+          <td><p>The data type of the content.</p></td>
+        </tr>
+        <tr>
+          <td>value</td>
+          <td><a href="#karps.Cell">Cell</a></td>
+          <td>optional</td>
+          <td><p>(optional) Returned if the node is an observable and if contents is
+requested.</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.NodePath">NodePath</h3>
+    <p>The path of a node from the root of the computation.</p><p>Each node in a computation is uniquely identified by a path, starting
+from the computation object. The fact that it is a path in a tree
+of nodes is entirely a user concept. For all practical matters, Karps
+only assumes that each node is uniquely addressable.</p><p>If two nodes in the same computation are found to share the same path, an
+error is returned.</p><p>The string in the path is assumed for now to only contain letters, digits, -
+and _. Each name may not be empty. The list may not be empty.</p><p>Note: the global path (that includes the session id and the computation id)
+is a separate data structure.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>path</td>
+          <td><a href="#string">string</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.NodeQueued">NodeQueued</h3>
+    <p>The node has been received and is awaiting processing.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <h3 id="karps.NodeRunning">NodeRunning</h3>
+    <p>The node has been scheduled to run by the backend.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <h3 id="karps.NodeStatus">NodeStatus</h3>
+    <p>The status of a node.</p><p>The status can be requested for both observables and datasets. However,
+in the case of datasets, success and failure may never be returned (only
+the start of the computation is registered).</p><p>Due to the optimizations performed by the query planner, requesting the
+status of a dataset may be meaningless (this operator may be entirely 
+optimized away by the planner).</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>success</td>
+          <td><a href="#karps.NodeComputationSuccess">NodeComputationSuccess</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>failure</td>
+          <td><a href="#karps.NodeComputationFailure">NodeComputationFailure</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>queued</td>
+          <td><a href="#karps.NodeQueued">NodeQueued</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>running</td>
+          <td><a href="#karps.NodeRunning">NodeRunning</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.NodeLocality">NodeLocality</h3>
+    <p>The locality of a compute node. This should be understood in the following
+abstract sense.</p><p>A local node is observable. Its content can be retrieved by the user (in the 
+form of a Cell object). It is subject to caching. It can be
+refered to in subsequent computations through a Pointer.</p><p>A distributed node is not observable. Its content is not accessible.</p><p>Karps may elicit to entirely remove distributed nodes
+as part of the query planning. Karps may elicit to perform 'distributed'
+operations as single-computer operations if it determines it is faster: the
+notion of 'local' and 'distributed' is abstract in this context.</p><p>Note: operations on grouped data</p>
+    <table class="enum-table">
+      <thead>
+        <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>LOCAL</td>
+          <td>0</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>DISTRIBUTED</td>
+          <td>1</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="file-heading">
+      <h2 id="op.proto">op.proto</h2><a href="#title">Top</a>
+    </div>
+    
+    <h3 id="karps.op.AggregationOperation">AggregationOperation</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>udaf</td>
+          <td><a href="#karps.op.UDAFAggregation">UDAFAggregation</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>structured_function</td>
+          <td><a href="#karps.op.StructuredAggregationFunction">StructuredAggregationFunction</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>struct</td>
+          <td><a href="#karps.op.AggregationOperation.StructField">AggregationOperation.StructField</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.AggregationOperation.StructField">AggregationOperation.StructField</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>name</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>op</td>
+          <td><a href="#karps.op.AggregationOperation">AggregationOperation</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.BroadcastJoin">BroadcastJoin</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <h3 id="karps.op.ColumnOperation">ColumnOperation</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>extraction</td>
+          <td><a href="#karps.op.ColumnOperation.Extraction">ColumnOperation.Extraction</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>function</td>
+          <td><a href="#karps.op.ColumnOperation.Function">ColumnOperation.Function</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>literal</td>
+          <td><a href="#karps.op.ColumnOperation.Literal">ColumnOperation.Literal</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>struct</td>
+          <td><a href="#karps.op.ColumnOperation.StructField">ColumnOperation.StructField</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.ColumnOperation.Extraction">ColumnOperation.Extraction</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>field_path</td>
+          <td><a href="#karps.op.FieldPath">FieldPath</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.ColumnOperation.Function">ColumnOperation.Function</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>name</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>arguments</td>
+          <td><a href="#karps.op.ColumnOperation">ColumnOperation</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.ColumnOperation.Literal">ColumnOperation.Literal</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>value</td>
+          <td><a href="#karps.Cell">Cell</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td><a href="#karps.DataType">DataType</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.ColumnOperation.StructField">ColumnOperation.StructField</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>name</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>op</td>
+          <td><a href="#karps.op.ColumnOperation">ColumnOperation</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.DistributedLiteral">DistributedLiteral</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>cellType</td>
+          <td><a href="#karps.DataType">DataType</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>values</td>
+          <td><a href="#karps.Cell">Cell</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.FieldPath">FieldPath</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>field</td>
+          <td><a href="#string">string</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.LocalLiteral">LocalLiteral</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>type</td>
+          <td><a href="#karps.DataType">DataType</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>value</td>
+          <td><a href="#karps.Cell">Cell</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.NodeOperation">NodeOperation</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>local_op</td>
+          <td><a href="#karps.op.StandardOperator">StandardOperator</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>local_literal</td>
+          <td><a href="#karps.op.LocalLiteral">LocalLiteral</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>distributed_literal</td>
+          <td><a href="#karps.op.DistributedLiteral">DistributedLiteral</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>opaque_aggregator</td>
+          <td><a href="#karps.op.OpaqueAggregator">OpaqueAggregator</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>broadcast</td>
+          <td><a href="#karps.op.BroadcastJoin">BroadcastJoin</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>structured_aggregation</td>
+          <td><a href="#karps.op.AggregationOperation">AggregationOperation</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>structured_transform</td>
+          <td><a href="#karps.op.ColumnOperation">ColumnOperation</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>pointer</td>
+          <td><a href="#karps.op.NodePointer">NodePointer</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>distributed_op</td>
+          <td><a href="#karps.op.StandardOperator">StandardOperator</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.NodePointer">NodePointer</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>path</td>
+          <td><a href="#karps.NodePath">NodePath</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.OpaqueAggregator">OpaqueAggregator</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>op</td>
+          <td><a href="#karps.op.StandardOperator">StandardOperator</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.StandardOperator">StandardOperator</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>name</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>extra</td>
+          <td><a href="#google.protobuf.Any">Any</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>output_type</td>
+          <td><a href="#karps.DataType">DataType</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.StructuredAggregationFunction">StructuredAggregationFunction</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>function_name</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>inputs</td>
+          <td><a href="#karps.op.FieldPath">FieldPath</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.op.UDAFAggregation">UDAFAggregation</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <div class="file-heading">
+      <h2 id="op_extras.proto">op_extras.proto</h2><a href="#title">Top</a>
+    </div>
+    
+    <div class="file-heading">
+      <h2 id="service.proto">service.proto</h2><a href="#title">Top</a>
+    </div>
+    <p>Service definitions.</p>
+    <h3 id="karps.ComputationStatusRequest">ComputationStatusRequest</h3>
+    <p>The request for the status of a computation.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>session_id</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>computation_id</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>path</td>
+          <td><a href="#string">string</a></td>
+          <td>repeated</td>
+          <td><p>A prefix that selects all or a subset of all the computation nodes.</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.ComputationStatusResponse">ComputationStatusResponse</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>status</td>
+          <td><a href="#karps.ComputationStatusResponse.Status">ComputationStatusResponse.Status</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.ComputationStatusResponse.Status">ComputationStatusResponse.Status</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>path</td>
+          <td><a href="#karps.NodePath">NodePath</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>status</td>
+          <td><a href="#karps.NodeStatus">NodeStatus</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.CreateComputationRequest">CreateComputationRequest</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>session_id</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p>The identifier of the session to run computations against.</p></td>
+        </tr>
+        <tr>
+          <td>computation</td>
+          <td><a href="#karps.Computation">Computation</a></td>
+          <td>optional</td>
+          <td><p>The computation to run.</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.CreateComputationResponse">CreateComputationResponse</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <h3 id="karps.CreateSessionData">CreateSessionData</h3>
+    <p>The data to create a new session.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>session_id</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.CreateSessionResult">CreateSessionResult</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <h3 id="karps.ResourceStatusRequest">ResourceStatusRequest</h3>
+    <p>A request on some resources that are within the scope of a session and 
+the server.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>paths</td>
+          <td><a href="#karps.ResourceStatusRequest.Resource">ResourceStatusRequest.Resource</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.ResourceStatusRequest.Resource">ResourceStatusRequest.Resource</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>hdfs_path</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p>A list of paths in HDFS. These are assumed to be URIs by the backend.</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.ResourceStatusResponse">ResourceStatusResponse</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>stamps</td>
+          <td><a href="#karps.ResourceStatusResponse.ResourceInfo">ResourceStatusResponse.ResourceInfo</a></td>
+          <td>repeated</td>
+          <td><p>The result message with the resource stamps, or some errors.</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.ResourceStatusResponse.ResourceError">ResourceStatusResponse.ResourceError</h3>
+    <p>An error that is returned if the backend cannot interrogate the given
+resource.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>hint</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.ResourceStatusResponse.ResourceInfo">ResourceStatusResponse.ResourceInfo</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>resource_stamp</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>error</td>
+          <td><a href="#karps.ResourceStatusResponse.ResourceError">ResourceStatusResponse.ResourceError</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.KarpsService">KarpsService</h3>
+    <p></p>
+    <table class="enum-table">
+      <thead>
+        <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CreateSession</td>
+          <td><a href="#karps.CreateSessionData">CreateSessionData</a></td>
+          <td><a href="#karps.CreateSessionResult">CreateSessionResult</a></td>
+          <td><p>Creates a new session on the server.</p><p>An error is returned if a session already exists with the same name.</p></td>
+        </tr>
+        <tr>
+          <td>ResourceStatus</td>
+          <td><a href="#karps.ResourceStatusRequest">ResourceStatusRequest</a></td>
+          <td><a href="#karps.ResourceStatusResponse">ResourceStatusResponse</a></td>
+          <td><p>Inspects some existing resources to determine their 'freshness'.</p><p>Given a list of resource descriptors (typically URIs), Karps returns some
+unique stamps that should respect the following invariant: if the content
+of the resource has changed, then the stamp has changed.</p><p>This is used by the optimizer to determine if some computations can be
+pruned and replaced with precached data.</p></td>
+        </tr>
+        <tr>
+          <td>CreateComputation</td>
+          <td><a href="#karps.CreateComputationRequest">CreateComputationRequest</a></td>
+          <td><a href="#karps.CreateComputationResponse">CreateComputationResponse</a></td>
+          <td><p>Creates a new computation for the given session.</p></td>
+        </tr>
+        <tr>
+          <td>ComputationStatus</td>
+          <td><a href="#karps.ComputationStatusRequest">ComputationStatusRequest</a></td>
+          <td><a href="#karps.ComputationStatusResponse">ComputationStatusResponse</a></td>
+          <td><p>Requests the status of some nodes of a computation.</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="file-heading">
+      <h2 id="types.proto">types.proto</h2><a href="#title">Top</a>
+    </div>
+    <p>Types and basic data structures.</p><p>This file defines the types of data, as understood in Karps. These data types
+correspond to the data types found in SQL, Spark, etc., with some small
+differences:</p><p> - the unit of work is the cell, not the row.</p><p> - a type is always associated with nullability information.</p><p>From a theoretical perspective, the types allowed by Karps are a subset of
+the algebraic datatypes: all the product types are allowed, and the only
+allowed sum type is Option/Maybe (nullability).</p><p>These changes allow a unified and well-defined treatment of datasets,
+columns and observables without having to make exceptions for various corner
+cases.</p><p>Meta-information is not allowed in types. It may be added eventually.</p>
+    <h3 id="karps.ArrayType">ArrayType</h3>
+    <p>An array of a given type.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>inner_type</td>
+          <td><a href="#karps.DataType">DataType</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.Cell">Cell</h3>
+    <p>A cell.</p><p>A cell is a unit of content, checked by a data type.</p><p>If all the values below are empty, it is the empty cell.</p><p>The messages are brief to facilitate the reading.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>t</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>i</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>d</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>b</td>
+          <td><a href="#bool">bool</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>s</td>
+          <td><a href="#karps.Cell">Cell</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>a</td>
+          <td><a href="#karps.Cell">Cell</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.DataType">DataType</h3>
+    <p>The type of data stored in Karps.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>nullable</td>
+          <td><a href="#bool">bool</a></td>
+          <td>optional</td>
+          <td><p>Nullability information. If set to nullable, the underlying value may
+be missing.</p></td>
+        </tr>
+        <tr>
+          <td>primitive</td>
+          <td><a href="#karps.DataType.Primitive">DataType.Primitive</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>array</td>
+          <td><a href="#karps.ArrayType">ArrayType</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>struct</td>
+          <td><a href="#karps.StructType">StructType</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.Row">Row</h3>
+    <p>A unit of content in Spark.</p><p>This is not used in Karps.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>cells</td>
+          <td><a href="#karps.Cell">Cell</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.StructType">StructType</h3>
+    <p>A structure. Unlike SQL, both the name and the order of the fields matter.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>fields</td>
+          <td><a href="#karps.StructType.StructField">StructType.StructField</a></td>
+          <td>repeated</td>
+          <td><p>Note: unlike Spark, fields must be non-empty (no empty struct).</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.StructType.StructField">StructType.StructField</h3>
+    <p>A field in a structure.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>name</td>
+          <td><a href="#string">string</a></td>
+          <td>optional</td>
+          <td><p>Must be non-empty. Anything is allowed.</p></td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td><a href="#karps.DataType">DataType</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="karps.DataType.Primitive">DataType.Primitive</h3>
+    <p>The primitive data types.</p>
+    <table class="enum-table">
+      <thead>
+        <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>STRING</td>
+          <td>0</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>DOUBLE</td>
+          <td>1</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>INT</td>
+          <td>2</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>BOOL</td>
+          <td>3</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="scalar-value-types">Scalar Value Types</h2>
+    <table class="scalar-value-types-table">
+      <thead>
+        <tr><td>.proto Type</td><td>Notes</td><td>C++ Type</td><td>Java Type</td><td>Python Type</td></tr>
+      </thead>
+      <tbody>
+        <tr id="double">
+          <td>double</td>
+          <td></td>
+          <td>double</td>
+          <td>double</td>
+          <td>float</td>
+        </tr>
+        <tr id="float">
+          <td>float</td>
+          <td></td>
+          <td>float</td>
+          <td>float</td>
+          <td>float</td>
+        </tr>
+        <tr id="int32">
+          <td>int32</td>
+          <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</td>
+          <td>int32</td>
+          <td>int</td>
+          <td>int</td>
+        </tr>
+        <tr id="int64">
+          <td>int64</td>
+          <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</td>
+          <td>int64</td>
+          <td>long</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="uint32">
+          <td>uint32</td>
+          <td>Uses variable-length encoding.</td>
+          <td>uint32</td>
+          <td>int</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="uint64">
+          <td>uint64</td>
+          <td>Uses variable-length encoding.</td>
+          <td>uint64</td>
+          <td>long</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="sint32">
+          <td>sint32</td>
+          <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</td>
+          <td>int32</td>
+          <td>int</td>
+          <td>int</td>
+        </tr>
+        <tr id="sint64">
+          <td>sint64</td>
+          <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</td>
+          <td>int64</td>
+          <td>long</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="fixed32">
+          <td>fixed32</td>
+          <td>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</td>
+          <td>uint32</td>
+          <td>int</td>
+          <td>int</td>
+        </tr>
+        <tr id="fixed64">
+          <td>fixed64</td>
+          <td>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</td>
+          <td>uint64</td>
+          <td>long</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="sfixed32">
+          <td>sfixed32</td>
+          <td>Always four bytes.</td>
+          <td>int32</td>
+          <td>int</td>
+          <td>int</td>
+        </tr>
+        <tr id="sfixed64">
+          <td>sfixed64</td>
+          <td>Always eight bytes.</td>
+          <td>int64</td>
+          <td>long</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="bool">
+          <td>bool</td>
+          <td></td>
+          <td>bool</td>
+          <td>boolean</td>
+          <td>boolean</td>
+        </tr>
+        <tr id="string">
+          <td>string</td>
+          <td>A string must always contain UTF-8 encoded or 7-bit ASCII text.</td>
+          <td>string</td>
+          <td>String</td>
+          <td>str/unicode</td>
+        </tr>
+        <tr id="bytes">
+          <td>bytes</td>
+          <td>May contain any arbitrary sequence of bytes.</td>
+          <td>string</td>
+          <td>ByteString</td>
+          <td>str</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </body>
+</html>
