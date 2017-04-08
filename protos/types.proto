@@ -60,7 +60,7 @@ message DataType {
   enum Primitive {
     STRING = 0;
     DOUBLE = 1;
-    INT = 2; // 32-bit encoding of signed integers.
+    INT = 2; /// 32-bit encoding of signed integers.
     BOOL = 3;
   }
 
@@ -98,8 +98,8 @@ message Cell {
   }
   // It is actually part of the one-of, but due to a limitation of ProtoBuf,
   // it needs to be set outside to allow for repeated fields.
-  repeated Cell s = 10;
-  repeated Cell a = 11;
+  repeated Cell s = 10; /// The content of a structure.
+  repeated Cell a = 11; /// The content of an array.
 }
 
 /**
