@@ -1,0 +1,121 @@
+/**
+ * Service definitions.
+ */
+syntax = "proto3";
+package karps;
+
+import "karps.proto";
+
+/**
+ * The data to create a new session.
+ */
+message CreateSessionData {
+  string session_id = 1;
+}
+
+message CreateSessionResult { }
+
+/**
+ * A request on some resources that are within the scope of a session and 
+ * the server.
+ */
+message ResourceStatusRequest {
+  message Resource {
+    oneof resource {
+      /**
+       * A list of paths in HDFS. These are assumed to be URIs by the backend.
+       */
+      string hdfs_path = 1;
+    }
+  }
+
+  repeated Resource paths = 1;
+}
+
+message ResourceStatusResponse {
+  /**
+   * An error that is returned if the backend cannot interrogate the given
+   * resource.
+   */
+  message ResourceError {
+    string hint = 1;
+  }
+  message ResourceInfo {
+    oneof info {
+      string resource_stamp = 1;
+      ResourceError error = 2;
+    }
+  }
+  /**
+   * The result message with the resource stamps, or some errors.
+   */
+  repeated ResourceInfo stamps = 1;
+}
+
+message CreateComputationRequest {
+  /**
+   * The identifier of the session to run computations against.
+   */
+  string session_id = 1;
+
+  /**
+   * The computation to run.
+   */
+  Computation computation = 2;
+}
+
+message CreateComputationResponse {}
+
+/**
+ * The request for the status of a computation.
+ */
+message ComputationStatusRequest {
+  string session_id = 1;
+  string computation_id = 2;
+
+  /**
+   * A prefix that selects all or a subset of all the computation nodes.
+   */
+  repeated string path = 3;
+}
+
+message ComputationStatusResponse {
+  // TODO: add the status of the computation?
+  message Status {
+    NodePath path = 1;
+    NodeStatus status = 2;
+    // TODO: add the RDD status.
+  }
+  repeated Status status = 1;
+}
+
+service KarpsService {
+  /**
+   * Creates a new session on the server.
+   *
+   * An error is returned if a session already exists with the same name.
+   */
+  rpc CreateSession(CreateSessionData) returns (CreateSessionResult);
+
+  /**
+   * Inspects some existing resources to determine their 'freshness'.
+   *
+   * Given a list of resource descriptors (typically URIs), Karps returns some
+   * unique stamps that should respect the following invariant: if the content
+   * of the resource has changed, then the stamp has changed.
+   *
+   * This is used by the optimizer to determine if some computations can be
+   * pruned and replaced with precached data.
+   */
+  rpc ResourceStatus(ResourceStatusRequest) returns (ResourceStatusResponse);
+
+  /**
+   * Creates a new computation for the given session.
+   */
+  rpc CreateComputation(CreateComputationRequest) returns (CreateComputationResponse);
+
+  /**
+   * Requests the status of some nodes of a computation.
+   */
+  rpc ComputationStatus(ComputationStatusRequest) returns (ComputationStatusResponse);
+}
