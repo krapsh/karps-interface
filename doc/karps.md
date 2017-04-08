@@ -597,8 +597,8 @@ The messages are brief to facilitate the reading.
 | i | [int32](#int32) | optional |  |
 | d | [double](#double) | optional |  |
 | b | [bool](#bool) | optional |  |
-| s | [Cell](#karps.Cell) | repeated |  |
-| a | [Cell](#karps.Cell) | repeated |  |
+| s | [Cell](#karps.Cell) | repeated | The content of a structure. |
+| a | [Cell](#karps.Cell) | repeated | The content of an array. |
 
 
 <a name="karps.DataType"/>
@@ -652,7 +652,7 @@ The primitive data types.
 | ---- | ------ | ----------- |
 | STRING | 0 |  |
 | DOUBLE | 1 |  |
-| INT | 2 |  |
+| INT | 2 | 32-bit encoding of signed integers. |
 | BOOL | 3 |  |
 
 
